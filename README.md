@@ -69,3 +69,7 @@ Se tiene previsto que la ejecución sea.... mmm... algo así:
 g++ -std=c++17 main.cpp -o smknn
 ./smknn < dataset.txt
 ```
+
+# Bibliografía
+- Beckman, N., Kriegel, H., Schneider, R. \& Seeger, B. (1990). The R*-tree: an efficient and robust access method for points and rectangles. *Proceedings of the 1990 ACM SIGMOD International Conference on Management of Data*, 322 - 331. [https://doi.org/10.1145/93597.98741](https://doi.org/10.1145/93597.98741)
+- Wang, Y., Ma, Y., Huang, H., Wang, B. \& Prasanna, D. (2022). A split–merge clustering algorithm based on the k-nearest neighbor graph. *Information Systems, 11*(102124), 1-24. [https://doi.org/10.1016/j.is.2022.102124](https://doi.org/10.1016/j.is.2022.102124)
