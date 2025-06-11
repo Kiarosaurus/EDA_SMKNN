@@ -59,7 +59,6 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 - [ ] Validar visualmente el algoritmo con los datasets sintéticos (Two Moons, Blobs, Spirals, etc.).
 - [ ] Validar el algoritmo con los datasets reales  usando Accuracy (AC), Precision (PR), Recall (RE) y F1-measure (F1).
 - [ ] Realizar análisis de sensibilidad para `k`, `thr` y `σ`.
-- 
 
 ---
 
