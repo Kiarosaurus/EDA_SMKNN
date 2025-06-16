@@ -4,11 +4,11 @@ project(Eda_Proyecto)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(Eda_Proyecto main.cpp
-        Rtree/Mbb.h
-        Rtree/Mbb.cpp
-        Rtree/Entry.cpp
-        Rtree/Entry.h
-        Rtree/Node.cpp
-        Rtree/Node.h
-        Rtree/Rtree.cpp
-        Rtree/Rtree.h)
+        RStarTree/Mbb.h
+        RStarTree/Mbb.cpp
+        RStarTree/Entry.cpp
+        RStarTree/Entry.h
+        RStarTree/Node.cpp
+        RStarTree/Node.h
+        RStarTree/Rtree.cpp
+        RStarTree/Rtree.h)
