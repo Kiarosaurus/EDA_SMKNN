@@ -6,17 +6,18 @@
 
 class Rtree {
 public:
-    Rtree(); // crea el árbol con raíz vacía
-    void insert(const Point& p); // inserta un punto en el árbol
-    std::vector<Point> rangeSearch(const Mbb& query) const; // búsqueda de rango
+    Rtree();
+    void insert(const Point& p);
+    std::vector<Point> rangeSearch(const Mbb& query) const;
 
 private:
-    Node* root; // raíz del árbol
+    Node* root;
 
-    Node* chooseLeaf(Node* n, const Entry& e); // elige hoja donde insertar
-    void adjustTree(Node* n); // actualiza MBBs hacia arriba
-    void splitNode(Node* n); // divide un nodo lleno
-    void reinsert(Node* n); // reinsertar algunas entradas
+    void insert(const Point& p, bool isReinserting);
+    Node* chooseLeaf(Node* n, const Entry& e);
+    void adjustTree(Node* n, Node* nn);
+    Node* splitNode(Node* n);
+    void reinsert(Node* n);
 };
 
 #endif // RTREE_H
