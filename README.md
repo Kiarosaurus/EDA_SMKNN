@@ -9,8 +9,8 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 
 ### 1.1 Implementación del Árbol R\*
 
-- [ ] Diseñar la estructura básica del **R\*-tree** (inserción, búsqueda de rango).
-- [ ] Verificar funcionamiento con datos sintéticos simples.
+- [x] Diseñar la estructura básica del **R\*-tree** (inserción, búsqueda de rango).
+- [x] Verificar funcionamiento con datos sintéticos simples.
 
 ### 1.2 Implementación del k-NN Algorithm
 
