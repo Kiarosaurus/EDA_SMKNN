@@ -13,6 +13,7 @@ constexpr float EPSILON = 1e-8f;
 
 class Point {
 private:
+    int id = -1; //Necesario para rastrear el índice
     array<float, DIM> coordinates_;
 public:
     Point();
@@ -36,6 +37,9 @@ public:
     static float distance(const Point& p1, const Point& p2);
 
     friend ostream& operator<<(ostream& os, const Point& point);
+
+    int getId() const { return id; }
+    void setId(int newId) { id = newId; }
 };
 
 

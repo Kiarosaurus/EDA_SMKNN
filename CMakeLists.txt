@@ -14,4 +14,6 @@ add_executable(Eda_Proyecto main.cpp
         RStarTree/Node.h
         RStarTree/Rtree.cpp
         RStarTree/Rtree.h
+        Knn_Interface/knn_strategy.h
+        Knn_Interface/knn_strategy.cpp
 )

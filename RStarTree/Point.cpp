@@ -117,7 +117,11 @@ float Point::distance(const Point& p1, const Point& p2) {
 }
 
 ostream& operator<<(ostream& os, const Point& point) {
-    os << "(";
+    if (point.coordinates_.empty()) {
+        os << "Point()";
+        return os;
+    }
+    os << "Point "<<point.getId()<<": (";
     for (size_t i = 0; i < DIM; ++i) {
         os << point.coordinates_[i];
         if (i < DIM - 1) os << ", ";
