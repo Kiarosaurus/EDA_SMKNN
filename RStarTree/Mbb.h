@@ -3,14 +3,15 @@
 
 #include <algorithm>
 #include <vector>
+#include "./Point.h" // Asegúrate de que la ruta sea correcta
 
-struct Point {
-    float x, y;
-    Point(float _x = 0, float _y = 0) : x(_x), y(_y) {}
-    bool operator==(const Point& other) const {
-        return x == other.x && y == other.y;
-    }
-};
+// struct Point {
+//     float x, y;
+//     Point(float _x = 0, float _y = 0) : x(_x), y(_y) {}
+//     bool operator==(const Point& other) const {
+//         return x == other.x && y == other.y;
+//     }
+// };
 
 struct Mbb {
     Point lower_left; // esquina inferior izquierda

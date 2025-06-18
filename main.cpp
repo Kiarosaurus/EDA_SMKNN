@@ -6,7 +6,7 @@
 int main() {
     Rtree tree;
 
-    std::ifstream in("dataset.txt");
+    std::ifstream in("../dataset.txt");
     if (!in) {
         std::cerr << "No se pudo abrir dataset.txt\n";
         return 1;
@@ -35,7 +35,7 @@ int main() {
 
     std::cout << "\nPuntos dentro del rango (" << x1 << "," << y1 << ") a (" << x2 << "," << y2 << "):\n";
     for (auto& p : found)
-        std::cout << "(" << p.x << ", " << p.y << ")\n";
+        std::cout << "(" << p[0] << ", " << p[1] << ")\n";
 
     std::cout << "\nTotal encontrados en rango: " << found.size() << "\n";
 

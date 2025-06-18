@@ -93,14 +93,14 @@ void Rtree::adjustTree(Node* node, Node* newNode) {
 
 // Divide un nodo en dos hermanos
 Node* Rtree::splitNode(Node* node) {
-    auto dx = node->boundingBox().upper_right.x - node->boundingBox().lower_left.x;
-    auto dy = node->boundingBox().upper_right.y - node->boundingBox().lower_left.y;
+    auto dx = node->boundingBox().upper_right[0] - node->boundingBox().lower_left[0];
+    auto dy = node->boundingBox().upper_right[1] - node->boundingBox().lower_left[1];
     int axis = dx > dy ? 0 : 1;
 
     std::sort(node->entries.begin(), node->entries.end(),
               [axis](const Entry& a, const Entry& b) {
-                  return axis ? a.box.lower_left.y < b.box.lower_left.y
-                              : a.box.lower_left.x < b.box.lower_left.x;
+                  return axis ? a.box.lower_left[1] < b.box.lower_left[1]
+                              : a.box.lower_left[0] < b.box.lower_left[0];
               });
 
     Node* sibling = new Node(node->isLeaf, node->level);
@@ -126,15 +126,15 @@ void Rtree::reinsert(Node* node) {
     distanceEntryPairs.reserve(node->entries.size());
 
     Point center(
-        (node->boundingBox().lower_left.x + node->boundingBox().upper_right.x) / 2,
-        (node->boundingBox().lower_left.y + node->boundingBox().upper_right.y) / 2
+        (node->boundingBox().lower_left[0] + node->boundingBox().upper_right[0]) / 2,
+        (node->boundingBox().lower_left[1] + node->boundingBox().upper_right[1]) / 2
     );
 
     for (const auto& entry : node->entries) {
-        float cx = (entry.box.lower_left.x + entry.box.upper_right.x) / 2;
-        float cy = (entry.box.lower_left.y + entry.box.upper_right.y) / 2;
-        float dx = cx - center.x;
-        float dy = cy - center.y;
+        float cx = (entry.box.lower_left[0] + entry.box.upper_right[0]) / 2;
+        float cy = (entry.box.lower_left[1] + entry.box.upper_right[1]) / 2;
+        float dx = cx - center[0];
+        float dy = cy - center[1];
         distanceEntryPairs.push_back({dx * dx + dy * dy, entry});
     }
 
