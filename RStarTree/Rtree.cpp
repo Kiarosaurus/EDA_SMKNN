@@ -182,3 +182,71 @@ std::vector<Point> Rtree::rangeSearch(const Mbb& queryBox) const {
 
     return result;
 }
+
+
+// Búsqueda k-NN usando un recorrido "best first" del R*-tree
+std::vector<Point> Rtree::kNearest(const Point& query, int k) const {
+    // Cola de prioridad para explorar nodos ordenados por distancia
+    struct NodeDist {
+        const Node* node; // nodo a procesar
+        float dist;       // distancia mínima de su MBB al query
+    };
+    auto cmpNode = [](const NodeDist& a, const NodeDist& b) { return a.dist > b.dist; };
+    std::priority_queue<NodeDist, std::vector<NodeDist>, decltype(cmpNode)> pq(cmpNode);
+    // comenzamos con la raíz
+    pq.push({root, root->boundingBox().minDist(query)});
+
+    // Mantiene los k mejores puntos encontrados hasta el momento
+    struct PointDist {
+        Point pt;
+        float dist;
+    };
+    auto cmpPoint = [](const PointDist& a, const PointDist& b) { return a.dist < b.dist; };
+    std::priority_queue<PointDist, std::vector<PointDist>, decltype(cmpPoint)> best(cmpPoint);
+
+    // radio actual (distancia al peor de los mejores). Sirve para podar nodos
+    float radius = std::numeric_limits<float>::infinity();
+
+    while (!pq.empty()) {
+        NodeDist nd = pq.top();
+        pq.pop();
+        // Si el nodo más cercano está más lejos que el radio, terminamos
+        if (nd.dist > radius)
+            break;
+
+        const Node* node = nd.node;
+        if (node->isLeaf) {
+            // Comparar cada punto en la hoja
+            for (const auto& entry : node->entries) {
+                float d = Point::distance(query, entry.data);
+                if (best.size() < (size_t)k) {
+                    best.push({entry.data, d});
+                    // Una vez alcanzados k, el top tiene el peor dist
+                    if (best.size() == (size_t)k)
+                        radius = best.top().dist;
+                } else if (d < best.top().dist) {
+                    best.pop();
+                    best.push({entry.data, d});
+                    radius = best.top().dist;
+                }
+            }
+        } else {
+            // Añade hijos potencialmente útiles
+            for (const auto& entry : node->entries) {
+                float d = entry.box.minDist(query);
+                if (d <= radius)
+                    pq.push({entry.child, d});
+            }
+        }
+    }
+
+    // Extraer los puntos ordenados por distancia ascendente
+    std::vector<Point> res;
+    res.reserve(best.size());
+    while (!best.empty()) {
+        res.push_back(best.top().pt);
+        best.pop();
+    }
+    std::reverse(res.begin(), res.end());
+    return res;
+}

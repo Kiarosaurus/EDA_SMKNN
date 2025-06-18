@@ -116,5 +116,15 @@ float Point::distance(const Point& p1, const Point& p2) {
     return sqrt(sum);
 }
 
+ostream& operator<<(ostream& os, const Point& point) {
+    os << "(";
+    for (size_t i = 0; i < DIM; ++i) {
+        os << point.coordinates_[i];
+        if (i < DIM - 1) os << ", ";
+    }
+    os << ")";
+    return os;
+}
+
 
 

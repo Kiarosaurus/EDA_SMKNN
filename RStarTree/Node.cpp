@@ -11,6 +11,7 @@ void Node::add(const Entry& e) {
 }
 
 Mbb Node::boundingBox() const {
+    if (entries.empty()) return Mbb();
     std::vector<Mbb> boxes;
     for (const auto& e : entries)
         boxes.push_back(e.box);

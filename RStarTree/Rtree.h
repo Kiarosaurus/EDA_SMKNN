@@ -9,6 +9,7 @@ public:
     Rtree();
     void insert(const Point& p);
     std::vector<Point> rangeSearch(const Mbb& query) const;
+    std::vector<Point> kNearest(const Point& query, int k) const;
 
 private:
     Node* root;
@@ -18,6 +19,7 @@ private:
     void adjustTree(Node* n, Node* nn);
     Node* splitNode(Node* n);
     void reinsert(Node* n);
+
 };
 
 #endif // RTREE_H

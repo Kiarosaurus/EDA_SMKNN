@@ -27,6 +27,7 @@ struct Mbb {
     void expand(const Mbb& other); // extiende este box (lo modifica)
     bool intersects(const Mbb& other) const; // si se cruzan
     static Mbb combine(const std::vector<Mbb>& boxes);
+    float minDist(const Point& p) const; // distancia mínima al punto p
 };
 
 #endif //MBB_H

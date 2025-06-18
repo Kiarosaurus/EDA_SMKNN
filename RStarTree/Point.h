@@ -5,6 +5,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <random>
+#include <iostream>
 using namespace std;
 
 constexpr size_t DIM = 2; //dimensiones R^2
@@ -34,7 +35,7 @@ public:
     static Point random(float min = 0.0f, float max = 1.0f);
     static float distance(const Point& p1, const Point& p2);
 
-
+    friend ostream& operator<<(ostream& os, const Point& point);
 };
 
 
