@@ -9,10 +9,13 @@ private:
     const std::vector<Point>& puntos;
     const KNNStrategy& knn;
     int k;
-    bool mutual;
+    bool mutual; 
+    //A[i][j]:
+    //true: x_i \in KNN(x_j) && x_j \in KNN(x_i)
+    //false: x_i \in KNN(x_j) || x_j \in KNN(x_i)
 
     std::vector<std::unordered_set<int>> knn_list; // KNN(i)
-    std::vector<std::vector<bool>> adyacencia;     // A[i][j] = 1 si i-j conectados
+    std::vector<std::vector<bool>> adyacencia;  // A[i][j] = 1 si i-j conectados
 
 public:
     KNNGraphBuilder(const std::vector<Point>& puntos_, const KNNStrategy& knn_, int k_, bool mutual_ = false)
@@ -26,9 +29,10 @@ public:
         // Paso 1: obtener lista KNN(i)
         for (int i = 0; i < n; ++i) {
             auto vecinos = knn.queryKNN(puntos[i], k);
+            // cout<<vecinos.size()<<" vecinos encontrados para el punto "<<i<<endl;
             knn_list[i].insert(vecinos.begin(), vecinos.end());
+            // cout<<knn_list[i].size()<<" vecinos encontrados para el punto "<<i<<endl;
         }
-
         // Paso 2: construir A[i][j] según Definición 1
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {

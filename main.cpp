@@ -6,6 +6,56 @@
 #include "Knn_Interface/knn_graph_builder.h"
 using namespace std;
 
+
+void build_with_brute_force_knn(const vector<Point>& points, int k) {
+    cout << "Construyendo grafo KNN con Brute Force...\n";
+    BruteForceKnn bruteForceKnn(points);
+    KNNGraphBuilder builder(points, bruteForceKnn, k, false); // mutual: A[]
+    builder.construir();
+
+    // const auto& A = builder.getAdyacencia();
+    // for (int i = 0; i < A.size(); ++i) {
+    //     cout << "Punto " << i+1 << ": ";
+    //     for (int j = 0; j < A[i].size(); ++j) {
+    //         if (A[i][j]) {
+    //             cout << j+1 << " ";
+    //         }
+    //     }
+    //     cout << endl;
+    // }
+
+    const auto& knnList = builder.getKNNList();
+    cout << "Lista KNN:\n";
+    for (int i = 0; i < knnList.size(); ++i) {
+        cout << "KNN(" << i+1 << "): ";
+        for (int j : knnList[i]) {
+            cout << j+1 << " "; // Mostrar los índices de los vecinos
+        }
+        cout << endl;
+    }
+}
+
+void build_with_rstar_tree_knn(const vector<Point>& points, int k) {
+    cout << "Construyendo grafo KNN con R*Tree...\n";
+    Rtree tree;
+    for (const auto& p : points) {
+        tree.insert(p);
+    }
+    RStarTreeKNN rstarKnn(tree);
+    KNNGraphBuilder builder(points, rstarKnn, k, false); // mutual: A[]
+    builder.construir();
+
+    const auto& knnList = builder.getKNNList();
+    cout << "Lista KNN:\n";
+    for (int i = 0; i < knnList.size(); ++i) {
+        cout << "KNN(" << i+1 << "): ";
+        for (int j : knnList[i]) {
+            cout << j+1 << " "; // Mostrar los índices de los vecinos
+        }
+        cout << endl;
+    }
+}
+
 int main() {
     Rtree tree;
 
@@ -47,45 +97,19 @@ int main() {
     // cout << "\nTotal encontrados en rango: " << found.size() << "\n";
 
     // Ejemplo de búsqueda k-NN
-    int n=103,k=5;
-    KNNStrategy* knnStrategy = nullptr;
+    int n=0,k=2;
+    // KNNStrategy* knnStrategy = nullptr;
     Point* p = nullptr;
 
     p = new Point(points[n]); // Crear un nuevo punto para la consulta KNN
     cout << "Punto de consulta KNN -> " << *p << endl;
     cout << "Buscando " << k << " vecinos mas cercanos...\n";
 
-    cout<<"R*Tree KNN:\n";
-    knnStrategy = new RStarTreeKNN(tree);
-    vector<int> ids_1 = knnStrategy->queryKNN(*p, k);
-    for (int id : ids_1) cout << points[id] << endl; // Imprimir los puntos encontrados por el KNN
-     
-
-    // cout << "\nKNN Brute Force:\n";
-    // knnStrategy = new BruteForceKnn(points);
-    // vector<int> ids_2 = knnStrategy->queryKNN(*p, k);
-    // for (int id : ids_2) cout << points[id] << endl; // Imprimir los puntos encontrados por el KNN
+    build_with_brute_force_knn(points, k);
+    cout<<endl;
+    build_with_rstar_tree_knn(points, k);
     
-    
-    delete knnStrategy;
-
-
-    // Construir el grafo KNN
-    cout << "\nConstruyendo grafo KNN...\n";
-    KNNGraphBuilder builder(points, *knnStrategy, k); // mutual = true
-    builder.construir();  // 👈 ¡IMPORTANTE!
-
-    const auto& A = builder.getAdyacencia();
-
-    for (int i = 0; i < A.size(); ++i) {
-        std::cout << "Vecinos de " << i << ": ";
-        for (int j = 0; j < A[i].size(); ++j) {
-            if (A[i][j])
-                std::cout << j << " ";
-        }
-        std::cout << "\n";
-    }
-
-    delete knnStrategy; // Liberar memoria del KNNStrategy
+    delete p; // Liberar memoria del punto de consulta
+    // delete knnStrategy; // Liberar memoria del KNNStrategy
     return 0;
 }

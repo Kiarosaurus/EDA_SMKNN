@@ -35,6 +35,14 @@ public:
 
     static Point random(float min = 0.0f, float max = 1.0f);
     static float distance(const Point& p1, const Point& p2);
+    static float distance2(const Point& p1, const Point& p2);
+    bool operator==(const Point& other) const {
+        for (size_t i = 0; i < DIM; ++i) {
+            if (fabs(coordinates_[i] - other.coordinates_[i]) > EPSILON)
+                return false;
+        }
+        return true;
+    }
 
     friend ostream& operator<<(ostream& os, const Point& point);
 

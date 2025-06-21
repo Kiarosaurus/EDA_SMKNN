@@ -58,7 +58,6 @@ float Mbb::minDist(const Point& p) const {
     else if (p[1] > upper_right[1])       // encima del box
         dy = p[1] - upper_right[1];
 
-    // Distancia euclidiana al cuadrado
-    return dx * dx + dy * dy;
+    return dx * dx + dy * dy; //fix1: add sqrt to return euclidean distance
 }
 
