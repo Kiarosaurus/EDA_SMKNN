@@ -3,10 +3,12 @@
 #include <algorithm>
 
 std::vector<int> BruteForceKnn::queryKNN(const Point& query, int k) const {
+    
     using DistId = std::pair<float, int>;
     std::priority_queue<DistId> maxHeap;
 
     for (int i = 0; i < data_.size(); ++i) {
+        if (data_[i].getId() == query.getId()) continue; // Evita el mismo punto
         float dist = Point::distance(query, data_[i]);
         if (maxHeap.size() < (size_t)k) {
             maxHeap.emplace(dist, i);

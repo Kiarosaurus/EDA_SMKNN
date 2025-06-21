@@ -218,6 +218,8 @@ std::vector<Point> Rtree::kNearest(const Point& query, int k) const {
         if (node->isLeaf) {
             // Comparar cada punto en la hoja
             for (const auto& entry : node->entries) {
+                if (entry.data.getId() == query.getId()) continue; // Evita el mismo punto
+
                 float d = Point::distance(query, entry.data);
                 if (best.size() < (size_t)k) {
                     best.push({entry.data, d});
