@@ -14,15 +14,15 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 
 ### 1.2 Implementación del k-NN Algorithm
 
-- [ ] Implementar el **algoritmo de búsqueda de k-vecinos más cercanos** apoyado en R\*-tree.
-- [ ] Permitir extracción de la matriz de adyacencia según la Definición 1 del paper.
-- [ ] Validar que los k-NN sean simétricos si se usa KNN mutuo.
+- [x] Implementar el **algoritmo de búsqueda de k-vecinos más cercanos** apoyado en R\*-tree.
+- [x] Permitir extracción de la matriz de adyacencia según la Definición 1 del paper.
+- [x] Validar que los k-NN sean simétricos si se usa KNN mutuo.
 
 ### 1.3 Pruebas Iniciales en el `main`
 
-- [ ] Leer puntos desde archivo o generar datos sintéticos.
-- [ ] Mostrar los k-neighbors más cercanos de cada punto.
-- [ ] Validar correctitud de la matriz de adyacencia del grafo KNN.
+- [x] Leer puntos desde archivo o generar datos sintéticos.
+- [x] Mostrar los k-neighbors más cercanos de cada punto.
+- [x] Validar correctitud de la matriz de adyacencia del grafo KNN.
 
 ---
 
@@ -30,8 +30,8 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 
 ### 2.1 Etapa 1: Construcción del Grafo KNN
 
-- [ ] Construir grafo KNN con pesos basados en **distancia euclidiana**.
-- [ ] Aplicar la Definición 1 (matriz de adyacencia) y Definición 2 (vecinos conectados).
+- [x] Construir grafo KNN con pesos basados en **distancia euclidiana**.
+- [x] Aplicar la Definición 1 (matriz de adyacencia) y Definición 2 (vecinos conectados).
 - [ ] Verificar el grafo visualmente y numéricamente.
 - [ ] Dibujar imagen de puntos iniciales con bordes del grafo KNN - en blanco y negro.
 
