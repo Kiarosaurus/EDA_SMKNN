@@ -28,6 +28,8 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 - [ ] Dibujar imagen de puntos iniciales con bordes del grafo KNN - en blanco y negro.
 - [ ] Verificar la correctitud del grafo visualmente y numéricamente.
 
+---
+
 # Etapa 2: Fase de Splitting
 
 ## 2.1 Implementación
@@ -39,6 +41,8 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 ## 2.2 Testeo
 - [ ] Dibujar subgrafos resultantes luego del split (sin pivotes) - a color.
 - [ ] Confirmar que los subgrafos representan clusters coherentes tras eliminar pivotes.
+
+---
 
 # Etapa 3: Fase de Merging
 
@@ -65,6 +69,8 @@ Se tiene previsto que la ejecución sea.... mmm... algo así:
 g++ -std=c++17 main.cpp -o smknn
 ./smknn < dataset.txt
 ```
+
+---
 
 # Bibliografía
 - Beckman, N., Kriegel, H., Schneider, R. \& Seeger, B. (1990). The R*-tree: an efficient and robust access method for points and rectangles. *Proceedings of the 1990 ACM SIGMOD International Conference on Management of Data*, 322 - 331. [https://doi.org/10.1145/93597.98741](https://doi.org/10.1145/93597.98741)
