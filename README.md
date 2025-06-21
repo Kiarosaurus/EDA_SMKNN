@@ -7,20 +7,20 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 
 # Etapa 1: Construcción de KNN
 
-## 1.1 Implementación del Árbol R\*
+### 1.1 Implementación del Árbol R\*
 
 - [x] Diseñar la estructura básica del **R\*-tree**.
 - [x] Programar métodos básicos inserción, búsqueda de rango.
 - [x] Verificar funcionamiento con datos sintéticos simples.
 
-## 1.2 Implementación del k-NN Algorithm
+### 1.2 Implementación del k-NN Algorithm
 
 - [x] Implementar el **algoritmo de búsqueda de k-vecinos más cercanos** apoyado en R\*-tree.
 - [x] Permitir extracción de la matriz de adyacencia (Definición 1).
 - [ ] Obtención de los vecinos conectados (Definición 2).
 - [x] Validar que los k-NN sean simétricos si se usa KNN mutuo.
 
-## 1.3 Pruebas Iniciales en el `main`
+### 1.3 Pruebas Iniciales en el `main`
 
 - [x] Leer puntos desde archivo.
 - [x] Mostrar los k-neighbors más cercanos de cada punto.
@@ -32,13 +32,13 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 
 # Etapa 2: Fase de Splitting
 
-## 2.1 Implementación
+### 2.1 Implementación
 - [ ] Implementar el cálculo del **local distance ratio** (Definición 3).
 - [ ] Identificar puntos pivote (`r(x) < thr`, Definición 4).
 - [ ] Remover pivotes y obtener subgrafos resultantes.
 - [ ] Implementar algoritmo de detección de componentes conexos.
 
-## 2.2 Testeo
+### 2.2 Testeo
 - [ ] Dibujar subgrafos resultantes luego del split (sin pivotes) - a color.
 - [ ] Confirmar que los subgrafos representan clusters coherentes tras eliminar pivotes.
 
@@ -46,7 +46,7 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 
 # Etapa 3: Fase de Merging
 
-## 3.1 Implementación
+### 3.1 Implementación
 - [ ] Implementar detección de pivotes entre clusters (Definición 5).
 - [ ] Calcular vecinos intra-cluster de pivotes (Definición 6).
 - [ ] Calcular bordes internos y externos (Definiciones 7 y 8).
@@ -54,7 +54,7 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 - [ ] Realizar merges sucesivos hasta obtener K clusters.
 - [ ] Asignar pivotes restantes al cluster más cercano.
 
-## 3. Evaluación, Visualización y Pruebas Finales
+### 3. Evaluación, Visualización y Pruebas Finales
 - [ ] Dibujar clusters finales luego del merge - a color.
 - [ ] Validar visualmente el algoritmo con los datasets sintéticos (Two Moons, Blobs, Spirals, etc.).
 - [ ] Validar el algoritmo con los datasets reales  usando Accuracy (AC), Precision (PR), Recall (RE) y F1-measure (F1).
@@ -62,8 +62,7 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 
 ---
 
-## 4. Ejecución del Proyecto :D
-Se tiene previsto que la ejecución sea.... mmm... algo así:
+# Ejecución del Proyecto
 
 ```bash
 g++ -std=c++17 main.cpp -o smknn
