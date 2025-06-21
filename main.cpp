@@ -59,9 +59,9 @@ void build_with_rstar_tree_knn(const vector<Point>& points, int k) {
 int main() {
     Rtree tree;
 
-    ifstream in("../dataset.txt");
+    ifstream in("../dataset1.txt");
     if (!in) {
-        cerr << "No se pudo abrir dataset.txt\n";
+        cerr << "No se pudo abrir dataset1.txt\n";
         return 1;
     }
 
@@ -98,18 +98,26 @@ int main() {
 
     // Ejemplo de búsqueda k-NN
     int n=0,k=2;
-    // KNNStrategy* knnStrategy = nullptr;
+    KNNStrategy* knnStrategy = nullptr;
     Point* p = nullptr;
 
     p = new Point(points[n]); // Crear un nuevo punto para la consulta KNN
     cout << "Punto de consulta KNN -> " << *p << endl;
     cout << "Buscando " << k << " vecinos mas cercanos...\n";
+    knnStrategy = new BruteForceKnn(points);
+    vector<int> knnIndices = knnStrategy->queryKNN(*p, k);
+    for (int idx : knnIndices) {
+        cout << points[idx] << endl; // Mostrar los vecinos encontrados
+    }
+
+    cout<<"----------------------------------------------"<<endl<<endl;
+    //---------------------------------------------
 
     build_with_brute_force_knn(points, k);
     cout<<endl;
     build_with_rstar_tree_knn(points, k);
     
     delete p; // Liberar memoria del punto de consulta
-    // delete knnStrategy; // Liberar memoria del KNNStrategy
+    delete knnStrategy; // Liberar memoria del KNNStrategy
     return 0;
 }
