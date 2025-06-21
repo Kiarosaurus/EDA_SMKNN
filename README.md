@@ -5,57 +5,53 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 
 ---
 
-## 1. Previas y estructuras
+# Etapa 1: Construcción de KNN
 
-### 1.1 Implementación del Árbol R\*
+## 1.1 Implementación del Árbol R\*
 
-- [x] Diseñar la estructura básica del **R\*-tree** (inserción, búsqueda de rango).
+- [x] Diseñar la estructura básica del **R\*-tree**.
+- [x] Programar métodos básicos inserción, búsqueda de rango.
 - [x] Verificar funcionamiento con datos sintéticos simples.
 
-### 1.2 Implementación del k-NN Algorithm
+## 1.2 Implementación del k-NN Algorithm
 
 - [x] Implementar el **algoritmo de búsqueda de k-vecinos más cercanos** apoyado en R\*-tree.
-- [x] Permitir extracción de la matriz de adyacencia según la Definición 1 del paper.
+- [x] Permitir extracción de la matriz de adyacencia (Definición 1).
+- [ ] Obtención de los vecinos conectados (Definición 2).
 - [x] Validar que los k-NN sean simétricos si se usa KNN mutuo.
 
-### 1.3 Pruebas Iniciales en el `main`
+## 1.3 Pruebas Iniciales en el `main`
 
-- [x] Leer puntos desde archivo o generar datos sintéticos.
+- [x] Leer puntos desde archivo.
 - [x] Mostrar los k-neighbors más cercanos de cada punto.
-- [x] Validar correctitud de la matriz de adyacencia del grafo KNN.
-
----
-
-## 2. Implementación del Algoritmo SMKNN
-
-### 2.1 Etapa 1: Construcción del Grafo KNN
-
-- [x] Construir grafo KNN con pesos basados en **distancia euclidiana**.
-- [x] Aplicar la Definición 1 (matriz de adyacencia) y Definición 2 (vecinos conectados).
-- [ ] Verificar el grafo visualmente y numéricamente.
+- [x] Validar correctitud de la matriz de adyacencia del grafo KNN con data.
 - [ ] Dibujar imagen de puntos iniciales con bordes del grafo KNN - en blanco y negro.
+- [ ] Verificar la correctitud del grafo visualmente y numéricamente.
 
-### 2.2 Etapa 2: Fase de Splitting
+# Etapa 2: Fase de Splitting
 
+## 2.1 Implementación
 - [ ] Implementar el cálculo del **local distance ratio** (Definición 3).
 - [ ] Identificar puntos pivote (`r(x) < thr`, Definición 4).
 - [ ] Remover pivotes y obtener subgrafos resultantes.
 - [ ] Implementar algoritmo de detección de componentes conexos.
+
+## 2.2 Testeo
 - [ ] Dibujar subgrafos resultantes luego del split (sin pivotes) - a color.
+- [ ] Confirmar que los subgrafos representan clusters coherentes tras eliminar pivotes.
 
-### 2.3 Etapa 3: Fase de Merging
+# Etapa 3: Fase de Merging
 
+## 3.1 Implementación
 - [ ] Implementar detección de pivotes entre clusters (Definición 5).
 - [ ] Calcular vecinos intra-cluster de pivotes (Definición 6).
 - [ ] Calcular bordes internos y externos (Definiciones 7 y 8).
 - [ ] Calcular similitud entre clusters (Definición 9, Ecuación 22).
 - [ ] Realizar merges sucesivos hasta obtener K clusters.
 - [ ] Asignar pivotes restantes al cluster más cercano.
-- [ ] Dibujar clusters finales luego del merge - a color.
-
----
 
 ## 3. Evaluación, Visualización y Pruebas Finales
+- [ ] Dibujar clusters finales luego del merge - a color.
 - [ ] Validar visualmente el algoritmo con los datasets sintéticos (Two Moons, Blobs, Spirals, etc.).
 - [ ] Validar el algoritmo con los datasets reales  usando Accuracy (AC), Precision (PR), Recall (RE) y F1-measure (F1).
 - [ ] Realizar análisis de sensibilidad para `k`, `thr` y `σ`.
