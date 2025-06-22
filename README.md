@@ -17,7 +17,7 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 
 - [x] Implementar el **algoritmo de búsqueda de k-vecinos más cercanos** apoyado en R\*-tree.
 - [x] Permitir extracción de la matriz de adyacencia (Definición 1).
-- [ ] Obtención de los vecinos conectados (Definición 2).
+- [x] Obtención de los vecinos conectados (Definición 2).
 - [x] Validar que los k-NN sean simétricos si se usa KNN mutuo.
 
 ### 1.3 Pruebas Iniciales en el `main`
@@ -25,21 +25,21 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 - [x] Leer puntos desde archivo.
 - [x] Mostrar los k-neighbors más cercanos de cada punto.
 - [x] Validar correctitud de la matriz de adyacencia del grafo KNN con data.
-- [ ] Dibujar imagen de puntos iniciales con bordes del grafo KNN - en blanco y negro.
-- [ ] Verificar la correctitud del grafo visualmente y numéricamente.
+- [x] Dibujar imagen de puntos iniciales con bordes del grafo KNN - en blanco y negro.
+- [x] Verificar la correctitud del grafo visualmente y numéricamente.
 
 ---
 
 # Etapa 2: Fase de Splitting
 
 ### 2.1 Implementación
-- [ ] Implementar el cálculo del **local distance ratio** (Definición 3).
-- [ ] Identificar puntos pivote (`r(x) < thr`, Definición 4).
-- [ ] Remover pivotes y obtener subgrafos resultantes.
-- [ ] Implementar algoritmo de detección de componentes conexos.
+- [x] Implementar el cálculo del **local distance ratio** (Definición 3).
+- [x] Identificar puntos pivote (`r(x) < thr`, Definición 4).
+- [x] Remover pivotes y obtener subgrafos resultantes.
+- [x] Implementar algoritmo de detección de componentes conexos.
 
 ### 2.2 Testeo
-- [ ] Dibujar subgrafos resultantes luego del split (sin pivotes) - a color.
+- [x] Dibujar subgrafos resultantes luego del split (sin pivotes) - a color.
 - [ ] Confirmar que los subgrafos representan clusters coherentes tras eliminar pivotes.
 
 ---
