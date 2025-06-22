@@ -1,16 +1,24 @@
-
-
-
+#pragma once
+#include <fstream>
 #include <vector>
-// Exporta puntos, aristas, pivotes y componentes a un JSON para render.py
-void exportVisualizationKnnGraph(
+#include <unordered_set>
+#include "../RStarTree/Point.h"
 
+void exportVisualizationKnnGraph(
     const std::vector<Point>& points,
-    const vector<vector<bool>>& adjMatrix,
-    const unordered_set<int>& pivotes,
-    const vector<vector<int>>& componentes
+    const std::vector<std::vector<bool>>& adjMatrix,
+    const std::unordered_set<int>& pivotes,
+    const std::vector<std::vector<int>>& componentes
+);
+
+
+void exportVisualizationKnnGraph(
+    const std::vector<Point>& points,
+    const std::vector<std::vector<bool>>& adjMatrix,
+    const std::unordered_set<int>& pivotes,
+    const std::vector<std::vector<int>>& componentes
 ) {
-    ofstream out("visualization.json");
+    std::ofstream out("frontend/visualization.json");
     out << "{\n";
 
     out << "\"points\": [\n";
@@ -34,7 +42,7 @@ void exportVisualizationKnnGraph(
     out << "\"pivotes\": [";
     for (auto it = pivotes.begin(); it != pivotes.end(); ++it) {
         out << *it;
-        if (next(it) != pivotes.end()) out << ",";
+        if (std::next(it) != pivotes.end()) out << ",";
     }
     out << "],\n";
 
