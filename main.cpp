@@ -33,6 +33,8 @@ void build_with_brute_force_knn(const vector<Point>& points, int k) {
         }
         cout << endl;
     }
+
+    
 }
 
 void build_with_rstar_tree_knn(const vector<Point>& points, int k) {
@@ -51,6 +53,18 @@ void build_with_rstar_tree_knn(const vector<Point>& points, int k) {
         cout << "KNN(" << i+1 << "): ";
         for (int j : knnList[i]) {
             cout << j+1 << " "; // Mostrar los índices de los vecinos
+        }
+        cout << endl;
+    }
+
+    const auto& A = builder.getAdyacencia();
+    cout << "Matriz de adyacencia A[i][j]:\n";
+    for (int i = 0; i < A.size(); ++i) {
+        cout << "Punto " << i+1 << ": ";
+        for (int j = 0; j < A[i].size(); ++j) {
+            if (A[i][j]) {
+                cout << j+1 << " "; // Mostrar los índices de los vecinos conectados
+            }
         }
         cout << endl;
     }
@@ -116,6 +130,7 @@ int main() {
     build_with_brute_force_knn(points, k);
     cout<<endl;
     build_with_rstar_tree_knn(points, k);
+
     
     delete p; // Liberar memoria del punto de consulta
     delete knnStrategy; // Liberar memoria del KNNStrategy

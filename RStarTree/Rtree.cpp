@@ -184,76 +184,93 @@ std::vector<Point> Rtree::rangeSearch(const Mbb& queryBox) const {
 }
 
 
-// Búsqueda k-NN usando un recorrido "best first" del R*-tree
 std::vector<Point> Rtree::kNearest(const Point& query, int k) const {
-    // Cola de prioridad para explorar nodos ordenados por distancia
+    // Nodo de la cola de búsqueda: almacena puntero a subárbol y dist^2 MBB→query
     struct NodeDist {
-        const Node* node; // nodo a procesar
-        float dist;       // distancia mínima de su MBB al query
+        const Node* node;
+        float dist2;
     };
-    auto cmpNode = [](const NodeDist& a, const NodeDist& b) { return a.dist > b.dist; };
-    std::priority_queue<NodeDist, std::vector<NodeDist>, decltype(cmpNode)> pq(cmpNode);
-    // comenzamos con la raíz
-    pq.push({root, root->boundingBox().minDist(query)});
+    auto cmpNode = [](const NodeDist& a, const NodeDist& b) {
+        return a.dist2 > b.dist2;  // menor dist2 primero
+    };
+    std::priority_queue<NodeDist,
+                        std::vector<NodeDist>,
+                        decltype(cmpNode)> pq(cmpNode);
 
-    // Mantiene los k mejores puntos encontrados hasta el momento
+    // Inicializamos recorriendo desde la raíz
+    pq.push({ root, root->boundingBox().minDist(query) });
+
+    // Estructura para guardar los k mejores candidatos (dist^2, id)
     struct PointDist {
         Point pt;
-        float dist;
+        float dist2;
     };
-    auto cmpPoint = [](const PointDist& a, const PointDist& b) { return a.dist < b.dist; };
-    std::priority_queue<PointDist, std::vector<PointDist>, decltype(cmpPoint)> best(cmpPoint);
+    auto cmpPoint = [](const PointDist& a, const PointDist& b) {
+        // Queremos que el peor (mayor dist2, o en empate mayor id) esté arriba
+        if (a.dist2 != b.dist2)
+            return a.dist2 < b.dist2;
+        return a.pt.getId() < b.pt.getId();
+    };
+    std::priority_queue<PointDist,
+                        std::vector<PointDist>,
+                        decltype(cmpPoint)> best(cmpPoint);
 
-    // Distancia cuadrada al peor de los mejores vecinos encontrados
+    // radio2 = dist^2 al peor de los k vecinos actuales
     float radius2 = std::numeric_limits<float>::infinity();
-    float radius = std::numeric_limits<float>::infinity(); // solo para reportar si se desea
 
     while (!pq.empty()) {
-        NodeDist nd = pq.top();
+        auto nd = pq.top(); 
         pq.pop();
 
-        // Si el nodo más cercano está más lejos que el radio actual, terminamos
-        if (nd.dist > radius2)
+        // Poda: si este subárbol está más lejos que nuestro peor candidato, cortamos
+        if (nd.dist2 > radius2) 
             break;
 
         const Node* node = nd.node;
         if (node->isLeaf) {
-            // Comparar cada punto en la hoja
-            for (const auto& entry : node->entries) {
-                if (entry.data.getId() == query.getId()) continue; // Evita el mismo punto
+            // Comparamos cada punto de la hoja
+            for (auto& entry : node->entries) {
+                // 1) Evita devolverte a ti mismo
+                if (entry.data.getId() == query.getId()) continue;
 
-                float d = Point::distance(query, entry.data);
+                // 2) Calcula dist^2 real
+                float d2 = Point::distance2(query, entry.data);
+
                 if (best.size() < (size_t)k) {
-                    best.push({entry.data, d});
-                    // Una vez alcanzados k, el top tiene el peor dist
-                    if (best.size() == (size_t)k) {
-                        radius = best.top().dist;
-                        radius2 = radius * radius;
+                    // Aún no tenemos k vecinos: añadimos directamente
+                    best.push({ entry.data, d2 });
+                    if (best.size() == (size_t)k)
+                        radius2 = best.top().dist2;
+                } 
+                else {
+                    // Ya hay k: solo sustituimos si es mejor
+                    auto worst = best.top();
+                    if (d2 < worst.dist2 ||
+                        (d2 == worst.dist2 && entry.data.getId() < worst.pt.getId())) {
+                        best.pop();
+                        best.push({ entry.data, d2 });
+                        radius2 = best.top().dist2;
                     }
-                } else if (d < best.top().dist) {
-                    best.pop();
-                    best.push({entry.data, d});
-                    radius = best.top().dist;
-                    radius2 = radius * radius;
                 }
             }
-        } else {
-            // Añade hijos potencialmente útiles
-            for (const auto& entry : node->entries) {
-                float d = entry.box.minDist(query);
-                if (d <= radius2)
-                    pq.push({entry.child, d});
+        } 
+        else {
+            // Nodo interno: propagamos a hijos cuyo MBB esté dentro del radio
+            for (auto& entry : node->entries) {
+                float childDist2 = entry.box.minDist(query);
+                if (childDist2 <= radius2)
+                    pq.push({ entry.child, childDist2 });
             }
         }
     }
 
-    // Extraer los puntos ordenados por distancia ascendente
-    std::vector<Point> res;
-    res.reserve(best.size());
+    // Extraemos resultados ordenados ascendentemente (menor dist^2 primero)
+    std::vector<Point> result;
+    result.reserve(best.size());
     while (!best.empty()) {
-        res.push_back(best.top().pt);
+        result.push_back(best.top().pt);
         best.pop();
     }
-    std::reverse(res.begin(), res.end());
-    return res;
+    std::reverse(result.begin(), result.end());
+    return result;
 }
