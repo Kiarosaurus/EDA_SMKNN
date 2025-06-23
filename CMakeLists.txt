@@ -18,5 +18,7 @@ add_executable(Eda_Proyecto main.cpp
         Knn_Interface/knn_strategy.cpp
         SMKNN/Splitt.h
         SMKNN/Splitt.cpp
+        SMKNN/Merge.cpp
+        SMKNN/Merge.h
         Frontend/ExportVisualizationFiles.h
 )

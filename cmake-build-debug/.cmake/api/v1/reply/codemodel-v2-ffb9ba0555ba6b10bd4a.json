@@ -6,7 +6,7 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.29"
@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "Eda_Proyecto::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-Eda_Proyecto-Debug-e09de575666277413606.json",
+					"jsonFile" : "target-Eda_Proyecto-Debug-fea137cd7463d5bb17e1.json",
 					"name" : "Eda_Proyecto",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/Aaron Coorahua/Desktop/UTEC/EDA/Eda Proyecto/cmake-build-debug",
-		"source" : "C:/Users/Aaron Coorahua/Desktop/UTEC/EDA/Eda Proyecto"
+		"build" : "/Users/flaviamanuico/Documents/Utec/2025-1/EDA/EDA_SMKNN/cmake-build-debug",
+		"source" : "/Users/flaviamanuico/Documents/Utec/2025-1/EDA/EDA_SMKNN"
 	},
 	"version" : 
 	{
