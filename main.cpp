@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_set>
 #include <cstdlib>
+#include <cmath>
 #include "RStarTree/Rtree.h"
 #include "Knn_Interface/knn_strategy.h"
 #include "Knn_Interface/knn_graph_builder.h"
@@ -12,12 +13,11 @@
 
 using namespace std;
 
-
 int main() {
     Rtree tree;
-    ifstream in("dataset.txt");
+    ifstream in("DS1.csv");
     if (!in) {
-        cerr << "No se pudo abrir dataset1.txt\n";
+        cerr << "No se pudo abrir DS1.csv\n";
         return 1;
     }
 
@@ -25,11 +25,20 @@ int main() {
     string line;
     int insertCount = 0;
 
-    cout << "Insertando puntos desde dataset1.txt:\n";
+    // Saltar encabezado: x,y,subject
+    getline(in, line);
+
+    cout << "Insertando puntos desde DS1.csv:\n";
     while (getline(in, line)) {
         istringstream ss(line);
-        float x, y;
-        ss >> x >> y;
+        string x_str, y_str, subject_str;
+        if (!getline(ss, x_str, ',')) continue;
+        if (!getline(ss, y_str, ',')) continue;
+        if (!getline(ss, subject_str, ',')) continue;
+
+        float x = stof(x_str);
+        float y = stof(y_str);
+
         Point p(x, y);
         p.setId(insertCount++);
         tree.insert(p);
@@ -38,13 +47,11 @@ int main() {
 
     cout << "\nTotal insertados n: " << insertCount << "\n\n";
 
-    // VALOR DE K log(n) del n puntos del dataset
-    int k = std::round(std::log(insertCount));  // loge(n)
+    int k = std::round(std::log(insertCount));
     if (k < 1) k = 1;
     cout << "Valor de k = log(n) : " << k << "\n";
     float threshold = 1.0;
 
-    // Construcción KNN
     RStarTreeKNN rstarKnn(tree);
     KNNGraphBuilder builder(points, rstarKnn, k, false);
     builder.construir();
@@ -67,15 +74,14 @@ int main() {
         cout << "\n";
     }
 
-    // SPLIT - SMKNN
     SplitterSMKNN splitter(points, knnList, A, threshold);
     splitter.calcularRatios();
     splitter.identificarPivotes();
     splitter.removerPivotes();
     auto componentes = splitter.obtenerComponentes();
 
-    cout << "\n--- Local Distance Ratios r(x) ---\n";
     const auto& ratios = splitter.getRatios();
+    cout << "\n--- Local Distance Ratios r(x) ---\n";
     for (int i = 0; i < ratios.size(); ++i)
         cout << "Punto " << i + 1 << ": r = " << ratios[i] << "\n";
 
@@ -92,16 +98,9 @@ int main() {
         cout << "\n";
     }
 
-    // Exportar a JSON y mostrar animación
     exportVisualizationKnnGraph(points, builder.getAdyacencia(), splitter.getPivotes(), componentes);
-    // Mostrar KNN sin animacion
     system("python frontend/render_knn_graph.py");
-    //TIENEN QUE CERRAR LA PESTAÑÑA DEL RENDER ANTERIOR PARA VER EL SPLIT
     system("python frontend/render_knn_split.py");
-    // Mostrar KNN split
-    // Mostrar animación de construcción del grafo KNN (USAR CON UN DATASET PEQUEÑO, SINO LA COMPU SE LAGUEA :'v)
-    // SOLO DEBEN PRESIONAR ENTER PARA VER LOS PIVOTES Y EL SPLIT DESPUÉS
-    //system("python frontend/render_knn_graph_animated.py");
 
     return 0;
 }
