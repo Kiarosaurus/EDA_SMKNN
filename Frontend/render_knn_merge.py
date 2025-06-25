@@ -31,7 +31,7 @@ for cid, cluster in enumerate(clusters):
 
 # ───────────────────────── Configurar colores ──────────────────────────
 num_clusters = max(1, len(clusters))
-cmap = cm.get_cmap("tab20", num_clusters)
+cmap = plt.colormaps["tab20"].resampled(num_clusters)
 
 def color_for(cid: int):
     """Devuelve un color estable para el cluster cid (cíclico si >20)."""

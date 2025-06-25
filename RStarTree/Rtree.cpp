@@ -59,6 +59,7 @@ void Rtree::adjustTree(Node* node, Node* newNode) {
     while (node != root) {
         Node* parent = node->parent;
 
+        // Actualizar el bounding box del nodo actual en el padre
         for (auto& entry : parent->entries) {
             if (entry.child == node) {
                 entry.box = node->boundingBox();
@@ -93,14 +94,25 @@ void Rtree::adjustTree(Node* node, Node* newNode) {
 
 // Divide un nodo en dos hermanos
 Node* Rtree::splitNode(Node* node) {
-    auto dx = node->boundingBox().upper_right[0] - node->boundingBox().lower_left[0];
-    auto dy = node->boundingBox().upper_right[1] - node->boundingBox().lower_left[1];
-    int axis = dx > dy ? 0 : 1;
+    // Usar el bounding box cacheado si está disponible
+    Mbb nodeBox = node->boundingBox();
+    
+    // Encuentra el eje con mayor extensión para la división
+    size_t dims = nodeBox.dimensions();
+    int bestAxis = 0;
+    float maxExtent = 0.0f;
+    
+    for (size_t i = 0; i < dims; ++i) {
+        float extent = nodeBox.upper_right[i] - nodeBox.lower_left[i];
+        if (extent > maxExtent) {
+            maxExtent = extent;
+            bestAxis = i;
+        }
+    }
 
     std::sort(node->entries.begin(), node->entries.end(),
-              [axis](const Entry& a, const Entry& b) {
-                  return axis ? a.box.lower_left[1] < b.box.lower_left[1]
-                              : a.box.lower_left[0] < b.box.lower_left[0];
+              [bestAxis](const Entry& a, const Entry& b) {
+                  return a.box.lower_left[bestAxis] < b.box.lower_left[bestAxis];
               });
 
     Node* sibling = new Node(node->isLeaf, node->level);
@@ -114,6 +126,10 @@ Node* Rtree::splitNode(Node* node) {
         }
     }
 
+    // Invalidar bounding boxes de ambos nodos
+    node->invalidateBoundingBox();
+    sibling->invalidateBoundingBox();
+
     return sibling;
 }
 
@@ -125,17 +141,28 @@ void Rtree::reinsert(Node* node) {
     std::vector<std::pair<float, Entry>> distanceEntryPairs;
     distanceEntryPairs.reserve(node->entries.size());
 
-    Point center(
-        (node->boundingBox().lower_left[0] + node->boundingBox().upper_right[0]) / 2,
-        (node->boundingBox().lower_left[1] + node->boundingBox().upper_right[1]) / 2
-    );
+    // Usar el bounding box cacheado
+    Mbb nodeBox = node->boundingBox();
+    
+    // Calcula el centro del nodo en todas las dimensiones
+    size_t dims = nodeBox.dimensions();
+    vector<float> center_coords(dims);
+    for (size_t i = 0; i < dims; ++i) {
+        center_coords[i] = (nodeBox.lower_left[i] + nodeBox.upper_right[i]) / 2;
+    }
+    Point center(center_coords);
 
     for (const auto& entry : node->entries) {
-        float cx = (entry.box.lower_left[0] + entry.box.upper_right[0]) / 2;
-        float cy = (entry.box.lower_left[1] + entry.box.upper_right[1]) / 2;
-        float dx = cx - center[0];
-        float dy = cy - center[1];
-        distanceEntryPairs.push_back({dx * dx + dy * dy, entry});
+        // Calcula el centro de la entrada en todas las dimensiones
+        vector<float> entry_center_coords(dims);
+        for (size_t i = 0; i < dims; ++i) {
+            entry_center_coords[i] = (entry.box.lower_left[i] + entry.box.upper_right[i]) / 2;
+        }
+        Point entry_center(entry_center_coords);
+        
+        // Calcula la distancia cuadrática al centro
+        float dist2 = Point::distance2(center, entry_center);
+        distanceEntryPairs.push_back({dist2, entry});
     }
 
     std::sort(distanceEntryPairs.begin(), distanceEntryPairs.end(),
@@ -147,11 +174,13 @@ void Rtree::reinsert(Node* node) {
         toReinsert.push_back(distanceEntryPairs[i].second);
     }
 
+    // Limpiar y reinsertar las entradas restantes
     node->entries.clear();
     for (size_t i = k; i < distanceEntryPairs.size(); ++i) {
         node->add(distanceEntryPairs[i].second);
     }
 
+    // Reinsertar las entradas más alejadas
     for (auto& entry : toReinsert) {
         insert(entry.data, true);
     }
