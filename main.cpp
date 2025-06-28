@@ -7,6 +7,7 @@
 #include <cmath>
 #include <algorithm>
 #include <chrono>
+#include <iomanip>
 
 #include "RStarTree/Rtree.h"
 #include "Knn_Interface/knn_strategy.h"
