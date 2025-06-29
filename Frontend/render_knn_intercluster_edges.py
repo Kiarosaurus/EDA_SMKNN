@@ -20,7 +20,7 @@ for cid, cluster in enumerate(clusters):
         label[idx] = cid
 
 num_clusters = max(1, len(clusters))
-cmap = plt.colormaps["tab20"].resampled(num_clusters)
+cmap = cm.get_cmap("tab20", num_clusters)
 
 def color_for(cid: int):
     return cmap(cid % 20)
