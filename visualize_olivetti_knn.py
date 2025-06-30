@@ -26,7 +26,7 @@ def plot_gallery(data, query_idx, neighbors, n_rows=10, n_cols=10):
         if idx == query_idx:
             ax.imshow(img, cmap='hot')  # Query en colores cálidos
         elif idx in neighbors:
-            ax.imshow(img, cmap='jet')  # Vecinos en colores fríos
+            ax.imshow(img, cmap='cool_r')  # Vecinos en colores fríos
         else:
             ax.imshow(img, cmap='gray')  # El resto en gris
         ax.axis('off')
@@ -36,4 +36,4 @@ def plot_gallery(data, query_idx, neighbors, n_rows=10, n_cols=10):
 if __name__ == '__main__':
     query_idx, neighbors = load_knn_result('knn_result.json')
     data = load_olivetti_data('datasets/olivetti/olivetti.csv')
-    plot_gallery(data, query_idx, neighbors, n_rows=10, n_cols=10) 
+    plot_gallery(data, query_idx, neighbors, n_rows=15, n_cols=10)

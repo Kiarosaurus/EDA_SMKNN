@@ -10,7 +10,7 @@ import json
 #                                 CONFIGURACIÓN
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-DATASETS_DIR = "datasets/Real"
+DATASETS_DIR = "datasets/Synthetic"
 K_RANGE = range(2, 31)
 THR_RANGE = np.arange(0.1, 2.1, 0.1)
 DEFAULT_K = 10
