@@ -63,6 +63,11 @@ Este proyecto tiene como objetivo la implementación desde cero del algoritmo **
 ---
 
 # Ejecución del Proyecto
+```bash
+python script.py
+```
+
+o
 
 ```bash
 g++ -std=c++17 main.cpp -o smknn
