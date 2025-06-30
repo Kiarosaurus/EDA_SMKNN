@@ -28,7 +28,7 @@ float safe_div(float a, float b) { return b == 0 ? 0 : a / b; }
 void export_knn_result_json(const std::string& output_path, int query_id, const std::vector<std::vector<bool>>& adyacencia) {
     std::ofstream out(output_path);
     if (!out.is_open()) {
-        std::cerr << "❌ No se pudo crear el archivo JSON: " << output_path << std::endl;
+        std::cerr << "No se pudo crear el archivo JSON: " << output_path << std::endl;
         return;
     }
 
@@ -103,55 +103,110 @@ vector<Point> loadCSV(const string& filename, vector<string>& etiquetas, unorder
     return data;
 }
 
-int main(int argc,char* argv[]){
-    if(argc!=5){ cerr<<"Uso: "<<argv[0]<<" <csv_path> <k> <threshold> <finalK>\n"; return 1; }
-    string csv_path=argv[1]; int k=stoi(argv[2]); float threshold=stof(argv[3]); int finalK=stoi(argv[4]);
-    try{
-        vector<string> etiquetas; unordered_set<string> clases_unicas;
-        vector<Point> points=loadCSV(csv_path,etiquetas,clases_unicas);
-        if(k<=0) k=max(1,(int)round(log(points.size())));
-        if(finalK<=0) finalK=(int)clases_unicas.size();
-        cout<<"Usando k = "<<k<<", threshold = "<<threshold<<", finalK = "<<finalK<<endl;
-        Rtree tree; for(auto& p:points) tree.insert(p);
+// ─────────────────────────────────────────────────────────────
+//                         FUNCIÓN PRINCIPAL
+// ─────────────────────────────────────────────────────────────
+int main(int argc, char* argv[]) {
+    if (argc != 5) {
+        cerr << "Uso: " << argv[0] << " <csv_path> <k> <threshold> <finalK>\n";
+        return 1;
+    }
+
+    // ───── Entrada de parámetros
+    string csv_path = argv[1];
+    int k = stoi(argv[2]);
+    float threshold = stof(argv[3]);
+    int finalK = stoi(argv[4]);
+
+    try {
+        // ───── Lectura del dataset
+        vector<string> etiquetas;
+        unordered_set<string> clases_unicas;
+        vector<Point> points = loadCSV(csv_path, etiquetas, clases_unicas);
+
+        if (k <= 0) k = max(1, (int)round(log(points.size())));
+        if (finalK <= 0) finalK = (int)clases_unicas.size();
+
+        cout << "Usando k = " << k << ", threshold = " << threshold << ", finalK = " << finalK << endl;
+
+        // ───── Construcción del árbol y grafo KNN
+        Rtree tree;
+        for (auto& p : points) tree.insert(p);
         RStarTreeKNN knn(tree);
-        KNNGraphBuilder builder(points,knn,k,false); builder.construir();
-        auto& A=builder.getAdyacencia(); auto& knnList=builder.getKNNList();
-        SplitterSMKNN splitter(points,knnList,A,threshold);
-        splitter.calcularRatios(); splitter.identificarPivotes(); splitter.removerPivotes();
-        auto componentes=splitter.obtenerComponentes();
-        exportVisualizationKnnGraph(points,A,splitter.getPivotes(),componentes);
-        MergerSMKNN merger(points,A,componentes,splitter.getPivotes(),finalK); merger.run();
-        auto& clusters=merger.getClusters();
-        exportVisualizationKnnGraph(points,A,splitter.getPivotes(),clusters);
-        cout<<"Etiquetas detectadas: "<<etiquetas.size()<<" | Clases únicas: "<<clases_unicas.size()<<endl;
-        if (csv_path.find("olivetti") != std::string::npos && points.size() > 1) {
-            int query_id = 1; // Puedes cambiar esto por otro criterio si lo deseas
+        KNNGraphBuilder builder(points, knn, k, false);
+        builder.construir();
+        auto& A = builder.getAdyacencia();
+        auto& knnList = builder.getKNNList();
+
+        // ───── Fase de Split
+        SplitterSMKNN splitter(points, knnList, A, threshold);
+        splitter.calcularRatios();
+        splitter.identificarPivotes();
+        splitter.removerPivotes();
+        auto componentes = splitter.obtenerComponentes();
+
+        // ───── Exportación intermedia (split)
+        exportVisualizationKnnGraph(points, A, splitter.getPivotes(), componentes);
+
+        // ───── Fase de Merge
+        MergerSMKNN merger(points, A, componentes, splitter.getPivotes(), finalK);
+        merger.run();
+        auto& clusters = merger.getClusters();
+
+        // ───── Exportación final (merge)
+        exportVisualizationKnnGraph(points, A, splitter.getPivotes(), clusters);
+
+        cout << "Etiquetas detectadas: " << etiquetas.size() << " | Clases únicas: " << clases_unicas.size() << endl;
+
+        // ───── Exportación JSON (caso especial)
+        if (csv_path.find("olivetti") != string::npos && points.size() > 1) {
+            int query_id = 1;
             export_knn_result_json("knn_result.json", query_id, A);
-            std::cout << "📁 Archivo 'knn_result.json' generado desde grafo SMKNN.\n";
+            cout << "Archivo 'knn_result.json' generado desde grafo SMKNN.\n";
         }
-        if(!etiquetas.empty()){
+
+        // ───── Evaluación de resultados
+        if (!etiquetas.empty()) {
             vector<int> predicted(points.size());
-            for(int cid=0;cid<clusters.size();++cid) for(int pid:clusters[cid]) predicted[pid]=cid;
-            unordered_map<string,int> label_to_id; int next_id=0;
-            for(const auto& e:etiquetas) if(!label_to_id.count(e)) label_to_id[e]=next_id++;
+            for (int cid = 0; cid < clusters.size(); ++cid)
+                for (int pid : clusters[cid]) predicted[pid] = cid;
+
+            unordered_map<string, int> label_to_id;
+            int next_id = 0;
+            for (const auto& e : etiquetas)
+                if (!label_to_id.count(e)) label_to_id[e] = next_id++;
+
             vector<int> y_true(points.size());
-            for(int i=0;i<points.size();++i) y_true[i]=label_to_id[etiquetas[i]];
-            unordered_map<int,unordered_map<int,int>> votes;
-            for(int i=0;i<points.size();++i) votes[predicted[i]][y_true[i]]++;
-            unordered_map<int,int> map_cluster;
-            for(auto& kv:votes){
-                int best=-1,bestc=-1;
-                for(auto& kv2:kv.second) if(kv2.second>bestc){ bestc=kv2.second; best=kv2.first; }
-                map_cluster[kv.first]=best;
+            for (int i = 0; i < points.size(); ++i)
+                y_true[i] = label_to_id[etiquetas[i]];
+
+            unordered_map<int, unordered_map<int, int>> votes;
+            for (int i = 0; i < points.size(); ++i)
+                votes[predicted[i]][y_true[i]]++;
+
+            unordered_map<int, int> map_cluster;
+            for (auto& kv : votes) {
+                int best = -1, bestc = -1;
+                for (auto& kv2 : kv.second)
+                    if (kv2.second > bestc) { bestc = kv2.second; best = kv2.first; }
+                map_cluster[kv.first] = best;
             }
-            for(int i=0;i<predicted.size();++i) predicted[i]=map_cluster[predicted[i]];
-            Metrics m=compute_metrics(predicted,etiquetas);
-            cout<<"🔍 Evaluación:\n";
-            cout<<" - Accuracy      (AC): "<<m.accuracy<<'\n';
-            cout<<" - Precision     (PR): "<<m.precision_macro<<'\n';
-            cout<<" - Recall        (RE): "<<m.recall_macro<<'\n';
-            cout<<" - F1 Score      (F1): "<<m.f1_macro<<'\n';
+
+            for (int i = 0; i < predicted.size(); ++i)
+                predicted[i] = map_cluster[predicted[i]];
+
+            Metrics m = compute_metrics(predicted, etiquetas);
+            cout << "Evaluación:\n";
+            cout << " - Accuracy      (AC): " << m.accuracy << '\n';
+            cout << " - Precision     (PR): " << m.precision_macro << '\n';
+            cout << " - Recall        (RE): " << m.recall_macro << '\n';
+            cout << " - F1 Score      (F1): " << m.f1_macro << '\n';
         }
-    }catch(const exception& e){ cerr<<"❌ Error: "<<e.what()<<endl; return 1; }
+
+    } catch (const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+        return 1;
+    }
+
     return 0;
 }

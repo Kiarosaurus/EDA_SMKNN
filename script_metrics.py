@@ -10,7 +10,7 @@ import json
 #                                 CONFIGURACIÓN
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-DATASETS_DIR = "datasets/Synthetic"
+DATASETS_DIR = "datasets/Real"
 K_RANGE = range(2, 31)
 THR_RANGE = np.arange(0.1, 2.1, 0.1)
 DEFAULT_K = 10
@@ -27,19 +27,19 @@ def compile_project():
     if not os.path.exists(BUILD_DIR):
         os.makedirs(BUILD_DIR)
 
-    print("🔧 Configurando proyecto con CMake...")
+    print("Configurando proyecto con CMake...")
     subprocess.run(["cmake", ".."], cwd=BUILD_DIR, check=True, capture_output=True)
 
-    print("⚙️  Compilando proyecto...")
+    print("Compilando proyecto...")
     subprocess.run(["cmake", "--build", "."], cwd=BUILD_DIR, check=True, capture_output=True)
-    print("✅ Proyecto compilado con éxito.")
+    print("Proyecto compilado con éxito.")
     print("─" * 60)
 
 def parse_f1_from_output(output):
     match = re.search(r"F1 Score\s*\(F1\):\s*([0-9.]+)", output)
     if match:
         return float(match.group(1))
-    print(f"⚠️  Advertencia: No se pudo encontrar el F1-Score en la salida.")
+    print(f"Advertencia: No se pudo encontrar el F1-Score en la salida.")
     return None
 
 def run_smknn_and_get_f1(csv_path, k, thr):
@@ -50,11 +50,11 @@ def run_smknn_and_get_f1(csv_path, k, thr):
         result = subprocess.run(args, check=True, capture_output=True, text=True, encoding='utf-8')
         return parse_f1_from_output(result.stdout)
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error ejecutando SMKNN para {os.path.basename(csv_path)} con k={k}, thr={thr}")
+        print(f"Error ejecutando SMKNN para {os.path.basename(csv_path)} con k={k}, thr={thr}")
         print(e.stderr)
         return None
     except FileNotFoundError:
-        print(f"❌ Error: El ejecutable '{EXE_PATH}' no fue encontrado. Asegúrate de compilar el proyecto.")
+        print(f"Error: El ejecutable '{EXE_PATH}' no fue encontrado. Asegúrate de compilar el proyecto.")
         exit(1)
 
 def plot_results(results, x_values, x_label, title):
@@ -102,14 +102,14 @@ if __name__ == "__main__":
         try:
             csv_files = [os.path.join(DATASETS_DIR, f) for f in os.listdir(DATASETS_DIR) if f.endswith('.csv')]
         except FileNotFoundError:
-            print(f"❌ Error: El directorio de datasets '{DATASETS_DIR}' no fue encontrado.")
+            print(f"Error: El directorio de datasets '{DATASETS_DIR}' no fue encontrado.")
             exit(1)
 
         if not csv_files:
-            print(f"❌ Error: No se encontraron archivos .csv en '{DATASETS_DIR}'.")
+            print(f"Error: No se encontraron archivos .csv en '{DATASETS_DIR}'.")
             exit(1)
 
-        print(f"📂 Encontrados {len(csv_files)} datasets para analizar.\n")
+        print(f"Encontrados {len(csv_files)} datasets para analizar.\n")
 
         # F1 vs k
         print("\n--- Analizando F1 Score vs. k-Neighbors ---")
@@ -141,8 +141,8 @@ if __name__ == "__main__":
         print("\n💾 Guardando resultados en metrics.json...")
         save_metrics_to_json(results_vs_k, results_vs_thr)
     else:
-        print("📁 Resultados cargados desde metrics.json (no se recalculó nada).")
+        print("Resultados cargados desde metrics.json (no se recalculó nada).")
 
-    print("\n✅ Generando gráficos...")
+    print("\nGenerando gráficos...")
     plot_results(results_vs_k, list(K_RANGE), "k-Nearest Neighbors", "Sensibilidad de SMKNN al parámetro 'k'")
     plot_results(results_vs_thr, list(THR_RANGE), "Threshold (thr)", "Sensibilidad de SMKNN al parámetro 'threshold'")

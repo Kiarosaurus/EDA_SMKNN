@@ -19,7 +19,7 @@ float SplitterSMKNN::calcularKDistancia(int idx) {
 
     if (distancias.size() < knn_list[idx].size()) return 0;
     std::sort(distancias.begin(), distancias.end());
-    return distancias.back(); // k-distance: más lejano de sus k vecinos
+    return distancias.back();
 }
 
 
