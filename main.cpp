@@ -93,7 +93,8 @@ vector<Point> loadCSV(const string& filename, vector<string>& etiquetas, unorder
             or col == "Classes"
             or col == "Type_of_glass"
             or col == "survival_status"
-            or col == "label") class_index = col_idx;
+            or col == "label"
+            or col == "subject") class_index = col_idx;
         col_idx++;
     }
 

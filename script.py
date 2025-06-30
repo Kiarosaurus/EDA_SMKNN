@@ -4,18 +4,18 @@ import platform
 
 # ─────────────── Configura tus parámetros ───────────────
 #csv_path   = "datasets/Synthetic/DS10.csv"
-#csv_path = "datasets/olivetti/olivetti.csv"
-csv_path = "datasets/Real/ecoli.csv"
+csv_path = "datasets/olivetti/olivetti.csv"
+#csv_path = "datasets/Real/liver_disorders.csv"
 
-k          = 5
-threshold  = 1.25
-final_k    = 0
+k          = 10
+threshold  = 1.0
+final_k    = 0 # Usando 0 el algoritmo detecta la cantidad final de clusters.
 
 visualizations = [
     #"Frontend/render_knn_graph.py",
     #"Frontend/render_knn_split.py",
     #"Frontend/render_knn_intercluster_edges.py",
-    #"Frontend/render_knn_merge.py"
+    "Frontend/render_knn_merge.py"
     #"visualize_olivetti_knn.py"
 ]
 
