@@ -52,38 +52,45 @@ float MergerSMKNN::computeSimilarity(int ci, int cj) {
     auto pg = findPivotsBetween(ci, cj);
     if (pg.empty()) return 0.0f;
 
-    // vecinos intra-cluster
     auto ng1 = findIntraNeighbors(pg, clusters[ci]);
     auto ng2 = findIntraNeighbors(pg, clusters[cj]);
 
-    // construir conjuntos de aristas según Def.7 y Def.8
     std::vector<std::pair<int,int>> ext1, int1, ext2, int2;
-    for (int v : pg) {
-        for (int i : ng1)
-            if (adyacencia[i][v]) ext1.emplace_back(i, v);
-        for (int i : ng1)
-            for (int u : clusters[ci])
-                if (adyacencia[i][u] &&
-                   std::find(ng1.begin(), ng1.end(), u)==ng1.end())
-                    int1.emplace_back(i, u);
 
-        for (int v2 : pg)
-            for (int j : ng2)
-                if (adyacencia[j][v2]) ext2.emplace_back(j, v2);
-        for (int j : ng2)
-            for (int u : clusters[cj])
-                if (adyacencia[j][u] &&
-                   std::find(ng2.begin(), ng2.end(), u)==ng2.end())
-                    int2.emplace_back(j, u);
+    for (int v : pg) {
+        for (int i : ng1) {
+            if (adyacencia[i][v]) ext1.emplace_back(i, v);
+        }
+        for (int j : ng2) {
+            if (adyacencia[j][v]) ext2.emplace_back(j, v);
+        }
     }
 
-    float aE1 = averageEdgeWeight(ext1),
-          aI1 = averageEdgeWeight(int1),
-          aE2 = averageEdgeWeight(ext2),
-          aI2 = averageEdgeWeight(int2);
+    std::unordered_set<int> ng1_set(ng1.begin(), ng1.end());
+    for (int i : ng1) {
+        for (int u : clusters[ci]) {
+            if (adyacencia[i][u] && ng1_set.find(u) == ng1_set.end()) {
+                int1.emplace_back(i, u);
+            }
+        }
+    }
 
-    float sim1 = std::exp(-std::pow(aE1 - aI1,2)/(2*sigma*sigma));
-    float sim2 = std::exp(-std::pow(aE2 - aI2,2)/(2*sigma*sigma));
+    std::unordered_set<int> ng2_set(ng2.begin(), ng2.end());
+    for (int j : ng2) {
+        for (int u : clusters[cj]) {
+            if (adyacencia[j][u] && ng2_set.find(u) == ng2_set.end()) {
+                int2.emplace_back(j, u);
+            }
+        }
+    }
+
+    float aE1 = averageEdgeWeight(ext1);
+    float aI1 = averageEdgeWeight(int1);
+    float aE2 = averageEdgeWeight(ext2);
+    float aI2 = averageEdgeWeight(int2);
+
+    float sim1 = std::exp(-std::pow(aE1 - aI1, 2) / (2 * sigma * sigma));
+    float sim2 = std::exp(-std::pow(aE2 - aI2, 2) / (2 * sigma * sigma));
 
     return std::min(sim1, sim2);
 }

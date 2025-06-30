@@ -3,10 +3,12 @@ import os
 import platform
 
 # ─────────────── Configura tus parámetros ───────────────
-#csv_path   = "datasets/synthetic/DS3.csv"
-csv_path = "datasets/olivetti/olivetti.csv"
-k          = 10
-threshold  = 1.0
+#csv_path   = "datasets/Synthetic/DS10.csv"
+#csv_path = "datasets/olivetti/olivetti.csv"
+csv_path = "datasets/Real/ecoli.csv"
+
+k          = 5
+threshold  = 1.25
 final_k    = 0
 
 visualizations = [
@@ -14,7 +16,7 @@ visualizations = [
     #"Frontend/render_knn_split.py",
     #"Frontend/render_knn_intercluster_edges.py",
     #"Frontend/render_knn_merge.py"
-    "visualize_olivetti_knn.py"
+    #"visualize_olivetti_knn.py"
 ]
 
 # ─────────────── Preparar compilación con CMake ───────────────
@@ -25,18 +27,18 @@ exe_path  = os.path.join(build_dir, exe_name)
 if not os.path.exists(build_dir):
     os.makedirs(build_dir)
 
-print("🔨 Configurando proyecto con CMake...")
+print(" Configurando proyecto con CMake...")
 subprocess.run(["cmake", ".."], cwd=build_dir, check=True)
 
-print("🔨 Compilando proyecto...")
+print(" Compilando proyecto...")
 subprocess.run(["cmake", "--build", "."], cwd=build_dir, check=True)
 
 # ─────────────── Ejecutar el binario ───────────────
 args = [exe_path, csv_path, str(k), str(threshold), str(final_k)]
-print(f"🚀 Ejecutando: {' '.join(args)}")
+print(f" Ejecutando: {' '.join(args)}")
 subprocess.run(args, check=True)
 
 # ─────────────── Ejecutar visualizaciones ───────────────
 for script in visualizations:
-    print(f"🖼️  Ejecutando visualización: {script}")
+    print(f" Ejecutando visualización: {script}")
     subprocess.run(["python", script], check=True)
